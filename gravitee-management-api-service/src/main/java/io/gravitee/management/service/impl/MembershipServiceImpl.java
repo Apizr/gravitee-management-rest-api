@@ -343,6 +343,17 @@ public class MembershipServiceImpl extends AbstractService implements Membership
         }
     }
 
+    @Override
+    public void removeUser(String userId) {
+        try {
+            Set<Membership> memberships = membershipRepository.findByUser(userId);
+            memberships.removeAll(memberships);
+        } catch (TechnicalException ex) {
+            LOGGER.error("An error occurs while trying to remove user {}", userId, ex);
+            throw new TechnicalManagementException("An error occurs while trying to remove user " + userId, ex);
+        }
+    }
+
     private Map<String, char[]> getMemberPermissions(MembershipReferenceType membershipReferenceType, String referenceId, String userId, Set<String> groups, RoleScope roleScope) {
         MemberEntity member = this.getMember(membershipReferenceType, referenceId, userId, roleScope);
         if (member != null) {
